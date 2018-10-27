@@ -1,0 +1,25 @@
+{
+  "name": "in-our-tea-time",
+  "version": "1.0.0",
+  "description": "A record of which beverage guests request at the end of each BBC \"In Our Time\" podcast.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cblanks/in-our-tea-time.git"
+  },
+  "author": "chris.blanks@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cblanks/in-our-tea-time/issues"
+  },
+  "homepage": "https://github.com/cblanks/in-our-tea-time#readme",
+  "dependencies": {
+    "npm": "^6.4.1"
+  },
+  "devDependencies": {
+    "rss-parser": "^3.5.2"
+  }
+}
