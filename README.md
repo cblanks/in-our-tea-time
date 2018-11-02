@@ -12,6 +12,18 @@ A record of which beverage guests request at the end of each BBC "In Our Time" p
 
 ## Process
 
+### Summarize feed info
+
+Access RSS feeds to create summary local json files:
+
 ```bsh
-ffprobe http://open.live.bbc.co.uk/mediaselector/5/redir/version/2.0/mediaset/audio-nondrm-download/proto/http/vpid/p06lnkbr.mp3
+node getFeedSummary.js
+```
+
+### Store audio clips
+
+Download and clip the last 30 seconds of a podcast:
+
+```bsh
+node clipAudioFile.js
 ```
