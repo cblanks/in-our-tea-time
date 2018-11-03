@@ -1,10 +1,9 @@
 // Dependencies
 const fs = require('fs');
 const Parser = require('rss-parser');
+const rimraf = require('rimraf');
 
-// Main
-const parser = new Parser();
-
+// Variables
 const feedList = [
   'http://podcasts.files.bbci.co.uk/p01drwny.rss',
   'http://podcasts.files.bbci.co.uk/p01dh5yg.rss',
@@ -12,6 +11,12 @@ const feedList = [
   'http://podcasts.files.bbci.co.uk/p01gvqlg.rss',
   'http://podcasts.files.bbci.co.uk/p01gyd7j.rss'
 ];
+
+// Main
+rimraf.sync('./feeds');
+fs.mkdirSync('./feeds');
+
+const parser = new Parser();
 
 feedList.forEach(feedUrl => {
   parser.parseURL(feedUrl, (err, feed) => {
@@ -28,7 +33,7 @@ feedList.forEach(feedUrl => {
       });
   
     fs.writeFileSync(
-      feed.title + '.json',
+      'feeds/' + feed.title + '.json',
       JSON.stringify(summary, null, 2),
       'utf8'
     );
