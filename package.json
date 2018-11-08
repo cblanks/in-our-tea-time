@@ -16,10 +16,8 @@
     "url": "https://github.com/cblanks/in-our-tea-time/issues"
   },
   "homepage": "https://github.com/cblanks/in-our-tea-time#readme",
-  "dependencies": {
-    "npm": "^6.4.1"
-  },
   "devDependencies": {
+    "rimraf": "^2.6.2",
     "rss-parser": "^3.5.2"
   }
 }

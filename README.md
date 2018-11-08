@@ -20,10 +20,14 @@ Access RSS feeds to create summary local json files:
 node getFeedSummary.js
 ```
 
-### Store audio clips
+### Process next podcast from feed list
 
-Download and clip the last 30 seconds of a podcast:
+Download and clip the last 30 seconds of a podcast and store a record of having processed it:
 
 ```bsh
-node clipAudioFile.js
+node processNextPodcast.js
 ```
+
+### Processing with Have On Demand
+
+curl -X POST http://api.havenondemand.com/1/api/async/recognizespeech/v2 --form "language_model=en-US" --form "file=@p06lnkbr_end.mp3" --form "apikey=75deba39-4b9a-43a9-bce3-f7a6c274974b"
