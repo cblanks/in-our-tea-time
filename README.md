@@ -1,8 +1,10 @@
 # in-our-tea-time
 
-A record of which beverage guests request at the end of each BBC "In Our Time" podcast.
+A record of which beverage guests request at the end of each BBC Radio 4 "In Our Time" podcast.
 
 ## Episode categories
+
+RSS feeds are available that split the episodes by category:
 
 - [Culture](http://podcasts.files.bbci.co.uk/p01drwny.rss)
 - [History](http://podcasts.files.bbci.co.uk/p01dh5yg.rss)

@@ -8,7 +8,7 @@ const path = require('path');
 // 
 // Functions
 //
-const exec = (cmd, cb) => {
+function exec(cmd, cb) {
   cp.exec(cmd, (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);
@@ -19,96 +19,111 @@ const exec = (cmd, cb) => {
   });
 }
 
-const download = (url, cb) => {
+function download(url, cb) {
   console.log('Downloading', url);
   const cmd = `wget ${url}`;
-  exec(cmd, (res) => { cb(); });
+  exec(cmd, res => { cb(); });
 }
 
-const duration = (filePath, cb) => {
+function duration(filePath, cb) {
   console.log('Finding duration of', filePath);
   const cmd = `ffprobe -v quiet -print_format json -show_format -show_streams ${filePath}`;
-  exec(cmd, (res) => { cb(JSON.parse(res).streams[0].duration); });
+  exec(cmd, res => { cb(JSON.parse(res).streams[0].duration); });
 }
 
-const cut = (fileParts, duration, cb) => {
+function cut(fileParts, duration, cb) {
   console.log('Clipping to end of', fileParts.base);
   const clipDuration = 90;
   const start = Math.max(duration - clipDuration, 0); 
   const cmd = `ffmpeg -ss ${start} -i ${fileParts.base} -vn -acodec copy ${fileParts.name}_end.mp3`;
-  exec(cmd, (res) => { cb(); });
+  exec(cmd, res => { cb(`${fileParts.name}_end.mp3`); });
 }
 
-const parseCategory = (fileName) => {
+function prepareAudio(record, cb) {
+  download(record.url, () => {
+    const fileParts = path.parse(record.url);
+
+    duration(fileParts.base, seconds => {
+      console.log(seconds);
+
+      cut(fileParts, seconds, audioClipPath => {
+        cb(audioClipPath); 
+      });
+    });
+  });
+}
+
+function parseCategory(fileName) {
   return fileName
     .split(': ')[1]
     .split('.json')[0];
-};
-
-const alreadyProcessed = (progress, feed) => {
-  return false;
 }
 
-const processNextFeed = (progress, cb) => { 
-  // step through feeds to find one not yet processed
-  let record;
+function getNextEpisode(callback) {
   const feedListFiles = fs.readdirSync('./feeds');
+  let record = null;
 
-  for (let i =  0; i < feedListFiles.length; i++) {
+  for (let i = 0; i < feedListFiles.length; i++) {
     let foundNewFeed = false;
-    const feedList = JSON.parse(fs.readFileSync('./feeds/'+feedListFiles[i], 'utf8'));
+    const feedList = JSON.parse(
+      fs.readFileSync('./feeds/'+feedListFiles[i], 'utf8')
+    );
 
     for (let j =  0; j < feedList.length; j++) {
-      if (alreadyProcessed(progress, feedList[j])) break;
-      foundNewFeed = true;
-      record = {
-        category: parseCategory(feedListFiles[i]),
-        url: feedList[j].media,
-        title: feedList[j].title,
-        pubDate: feedList[j].pubDate,
-        transcript: null,
-        counts: { tea: 0, coffee: 0 }
-      };
+      if (!feedList[j].downloaded) {
+        foundNewFeed = true;
+        record = {
+          category: parseCategory(feedListFiles[i]),
+          url: feedList[j].media,
+          title: feedList[j].title,
+          pubDate: feedList[j].pubDate,
+          transcript: null,
+          counts: { tea: 0, coffee: 0 }
+        };
+        break;
+      }
     }
 
     if (foundNewFeed) break;
   }
 
-  if (record) {
-    const fileParts = path.parse(record.url);
-    
-    download(record.url, () => {
-      duration(fileParts.base, (seconds) => {
-        cut(fileParts, seconds, () => {
-          // process with havenondemand
-          console.log('done');
-          cb(record); 
-        });
-      });
-    });
-  }
-};
+  callback(record);
+}
 
 // 
 // Main
-// 
+//
+
 // cron job runs this every X seconds to comply with haven ondemand processng restrictions
-const progressFile = path.resolve('./progress.json');
 
-fs.readFile(progressFile, 'utf8', (err, data) => {
-  let json = [];
-  try {
-    json = JSON.parse(data);
-  } catch (e) {
-    // if (err) console.log(err);
-  } 
+getNextEpisode(record => {
+  console.log(record);
 
-  processNextFeed(json, (result) => {
-    json.push(result);
-    fs.writeFileSync(
-      progressFile,
-      JSON.stringify(json, null, 2),
-      'utf8'
-    );
+  prepareAudio(record, audioClipPath => {
+    console.log(audioClipPath);
+
+    // TODO: launch BIFHI process
+    // save a token file
+    console.log(audioClipPath.split('.mp3', '.json'));
   });
 });
+
+// const progressFile = path.resolve('./progress.json');
+
+// fs.readFile(progressFile, 'utf8', (err, data) => {
+//   let json = [];
+//   try {
+//     json = JSON.parse(data);
+//   } catch (err) {
+//     if (err) console.log(err);
+//   } 
+
+//   processNextFeed(json, (result) => {
+//     json.push(result);
+//     fs.writeFileSync(
+//       progressFile,
+//       JSON.stringify(json, null, 2),
+//       'utf8'
+//     );
+//   });
+// });

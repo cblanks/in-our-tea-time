@@ -5,10 +5,10 @@ const rimraf = require('rimraf');
 
 // Variables
 const feedList = [
-  'http://podcasts.files.bbci.co.uk/p01drwny.rss',
-  'http://podcasts.files.bbci.co.uk/p01dh5yg.rss',
-  'http://podcasts.files.bbci.co.uk/p01f0vzr.rss',
-  'http://podcasts.files.bbci.co.uk/p01gvqlg.rss',
+  // 'http://podcasts.files.bbci.co.uk/p01drwny.rss',
+  // 'http://podcasts.files.bbci.co.uk/p01dh5yg.rss',
+  // 'http://podcasts.files.bbci.co.uk/p01f0vzr.rss',
+  // 'http://podcasts.files.bbci.co.uk/p01gvqlg.rss',
   'http://podcasts.files.bbci.co.uk/p01gyd7j.rss'
 ];
 
@@ -28,7 +28,8 @@ feedList.forEach(feedUrl => {
           media: entry.enclosure.url,
           title: entry.title,
           link: entry.link,
-          pubDate: entry.pubDate
+          pubDate: entry.pubDate,
+          downloaded: false
         };
       });
   
