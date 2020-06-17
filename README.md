@@ -30,6 +30,6 @@ Download and clip the last 30 seconds of a podcast and store a record of having 
 node processNextPodcast.js
 ```
 
-### Processing with Have On Demand
+### Processing with Haven On Demand
 
 curl -X POST http://api.havenondemand.com/1/api/async/recognizespeech/v2 --form "language_model=en-US" --form "file=@p06lnkbr_end.mp3" --form "apikey=75deba39-4b9a-43a9-bce3-f7a6c274974b"
